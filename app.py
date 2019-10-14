@@ -34,6 +34,9 @@ def findAllQuery(table):
 def insertpeopleQuery(first_name, last_name):
     return ("INSERT INTO people (`firstname`, `lastname`) VALUES ('{}', '{}')".format(first_name, last_name))
 
+def insertmovieQuery(title, duration, original_title, release_date, rating):
+    return ("INSERT INTO movies (`title`, `duration`, `original_title`, `release_date`, `rating`) VALUES ('{}', '{}', '{}', '{}', '{}')".format(title, duration, original_title, release_date, rating))
+
 def find(table, id):
     cnx = connectToDatabase()
     cursor = createCursor(cnx)
@@ -62,6 +65,15 @@ def insertpeople(first_name, last_name):
     disconnectDatabase(cnx)
     return results
 
+def insertmovie(title, duration, original_title, release_date, rating):
+    cnx = connectToDatabase()
+    cursor = createCursor(cnx)
+    results = cursor.execute(insertmovieQuery(title, duration, original_title, release_date, rating))
+    cnx.commit()
+    closeCursor(cursor)
+    disconnectDatabase(cnx)
+    return results
+
 def printPerson(person):
     print("#{}: {} {}".format(person['id'], person['firstname'], person['lastname']))
 
@@ -80,9 +92,15 @@ list_parser.add_argument('--export' , help='Chemin du fichier exportÃ©')
 find_parser = action_subparser.add_parser('find', help='Trouve une entitÃ© selon un paramÃ¨tre')
 find_parser.add_argument('id' , help='Identifant Ã  rechercher')
 
-insert_parser = action_subparser.add_parser('insert', help='Inserrer un people selon un parmètre')
+insert_parser = action_subparser.add_parser('insert', help='Inserrer une entité selon un parmètre')
 insert_parser.add_argument('--firstname', help='Prénom du people')
 insert_parser.add_argument('--lastname', help='Nom du people')
+
+insert_parser.add_argument('--title', help='Titre français du film')
+insert_parser.add_argument('--duration', help='La durée du film en minutes')
+insert_parser.add_argument('--original-title', help='Titre original du film')
+insert_parser.add_argument('--release_date', help='Date de sortie du film')
+insert_parser.add_argument('--rating', help='Restriction à certains publics')
 
 args = parser.parse_args()
 
@@ -118,3 +136,5 @@ if args.context == "movies":
         movies = find("movies", movieId)
         for movie in movies:
             printMovie(movie)
+    if args.action == "insert":
+        newmovie = insertmovie(args.title, args.duration, args.original_title, args.release_date, args.rating)
