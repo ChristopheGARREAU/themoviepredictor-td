@@ -37,6 +37,9 @@ def insertpeopleQuery(first_name, last_name):
 def insertmovieQuery(title, duration, original_title, release_date, rating):
     return ("INSERT INTO movies (`title`, `duration`, `original_title`, `release_date`, `rating`) VALUES ('{}', '{}', '{}', '{}', '{}')".format(title, duration, original_title, release_date, rating))
 
+def importQuery(table, title, original_title, duration, rating, release_date):
+    return ("INSERT INTO table VALUES ")
+
 def find(table, id):
     cnx = connectToDatabase()
     cursor = createCursor(cnx)
@@ -102,6 +105,8 @@ insert_parser.add_argument('--original-title', help='Titre original du film')
 insert_parser.add_argument('--release_date', help='Date de sortie du film')
 insert_parser.add_argument('--rating', help='Restriction à certains publics')
 
+import_parser = action_subparser.add_parser('import', help='Chemin du fichier à importer')
+
 args = parser.parse_args()
 
 if args.context == "people":
@@ -138,3 +143,9 @@ if args.context == "movies":
             printMovie(movie)
     if args.action == "insert":
         newmovie = insertmovie(args.title, args.duration, args.original_title, args.release_date, args.rating)
+    if args.action == "import":
+        with open('new_movies.csv','r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            next(reader)
+            for row in reader:
+                insertmovie(row[0], int(row[2]), row[1], row[4], row[3])
