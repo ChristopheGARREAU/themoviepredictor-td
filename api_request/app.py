@@ -39,8 +39,13 @@ def insert_people_query(person):
     return (f"INSERT INTO `people` (`firstname`, `lastname`) VALUES ('{person.firstname}', '{person.lastname}');")
 
 def insert_movie_query(movie):
-    return (f"INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`) VALUES ('{movie.title}', '{movie.original_title}', {movie.duration}, '{movie.rating}', '{movie.release_date}', '{movie.revenu}');")
-
+#   return (f"INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`) VALUES ('{movie.title}', '{movie.original_title}', {movie.duration}, '{movie.rating}', '{movie.release_date}', '{movie.revenu}');")
+    add_movie = (
+        "INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`)"
+         "VALUES (%s, %s, %s, %s, %s, %s)"
+    )    
+    data_movie = (movie.title, movie.original_title, movie.duration, movie.rating, movie.release_date, movie.revenu)
+    return (add_movie, data_movie)
 
 def find(table, id):
     cnx = connectToDatabase()
@@ -113,7 +118,8 @@ def insert_people(person):
 def insert_movie(movie):
     cnx = connectToDatabase()
     cursor = createCursor(cnx)
-    cursor.execute(insert_movie_query(movie))
+    (add_movie, data_movie) = insert_movie_query(movie)
+    cursor.execute(add_movie, data_movie)
     cnx.commit()
     last_id = cursor.lastrowid
     closeCursor(cursor)

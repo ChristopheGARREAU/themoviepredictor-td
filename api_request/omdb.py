@@ -37,6 +37,8 @@ class OMDB:
         locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
         if data['BoxOffice'] != "N/A":
             self.revenu = int(locale.atof(data['BoxOffice'].strip("$")))
+        else:
+            self.revenu = None
         
 
         self.actors = []
