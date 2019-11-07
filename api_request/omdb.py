@@ -33,7 +33,7 @@ class OMDB:
 
         self.rating = "TP"
 
-     #  self.revenu = 'NULL'
+     
         locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
         if data['BoxOffice'] != "N/A":
             self.revenu = int(locale.atof(data['BoxOffice'].strip("$")))

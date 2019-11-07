@@ -38,13 +38,18 @@ def findAllQuery(table):
 def insert_people_query(person):
     return (f"INSERT INTO `people` (`firstname`, `lastname`) VALUES ('{person.firstname}', '{person.lastname}');")
 
-def insert_movie_query(movie):
-#   return (f"INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`) VALUES ('{movie.title}', '{movie.original_title}', {movie.duration}, '{movie.rating}', '{movie.release_date}', '{movie.revenu}');")
+def insert_movie_query(movie):  # méthode cursor connector statement pour gérer quand donnée manque
     add_movie = (
         "INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`)"
-         "VALUES (%s, %s, %s, %s, %s, %s)"
+        "VALUES (%(title)s, %(original_title)s, %(duration)s, %(rating)s, %(release_date)s, %(revenu)s)"
     )    
-    data_movie = (movie.title, movie.original_title, movie.duration, movie.rating, movie.release_date, movie.revenu)
+    data_movie = {
+        'title' : movie.title,
+        'original_title' : movie.original_title,
+        'duration' : movie.duration,
+        'rating' : movie.rating,
+        'release_date' : movie.release_date,
+        'revenu' : movie.revenu}
     return (add_movie, data_movie)
 
 def find(table, id):
@@ -118,7 +123,7 @@ def insert_people(person):
 def insert_movie(movie):
     cnx = connectToDatabase()
     cursor = createCursor(cnx)
-    (add_movie, data_movie) = insert_movie_query(movie)
+    (add_movie, data_movie) = insert_movie_query(movie) # méthode cursor connector statement suite
     cursor.execute(add_movie, data_movie)
     cnx.commit()
     last_id = cursor.lastrowid
