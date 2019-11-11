@@ -17,7 +17,7 @@ from omdb import OMDB
 
 def connectToDatabase():
     return mysql.connector.connect(user='predictor', password='predictor',
-                              host='127.0.0.1',
+                              host='database',
                               database='predictor')
 
 def disconnectDatabase(cnx):

@@ -12,9 +12,6 @@ class OMDB:
         self.id = id
         
            
- #  def get_film(self, name):
-        
-                
         load_dotenv()
         API_KEY = os.getenv('api_key')
 
@@ -31,7 +28,10 @@ class OMDB:
 
         self.original_title = data['Title']
 
-        self.rating = "TP"
+        self.rating = data['Rated']
+        if self.rating == "PG":
+            self.rating = "TP"
+        
 
      
         locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
@@ -46,10 +46,3 @@ class OMDB:
         for person in range(len(actor)):
             name_separated = actor[person].strip().split(' ')
             self.actors.append(name_separated)
-
-        #for person in range(len(actor)):
-        #    self.actors.append(actor[person].split(', '))
-        #for person in data['Actors']:
-        #    self.people.append(data['Actors'[person]])
-        #self.people = data['Actors']
-        #print(self.actors)

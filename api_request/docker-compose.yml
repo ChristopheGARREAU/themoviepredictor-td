@@ -1,0 +1,40 @@
+version: '3.7'
+
+services: 
+  app:
+    build: .  # construit dans le répertoire courant
+    env_file: .env  # identifiants
+    volumes:
+      - .:/usr/src/themoviepredictor  # répertoire courant : chemin dans le container
+    networks:
+      - database_net
+    command: tail -f /dev/null # exécute une requête qui ne revoie rien -> met le script en attente de commande
+    depends_on: 
+      - database      #attend que la bdd sql démarre avant de se lancer
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=predictor
+      - MYSQL_PASSWORD=predictor
+      - MYSQL_DATABASE=predictor
+    networks:
+      - database_net
+    ports:
+      - 3306:3306
+    volumes:
+      - database_data:/var/lib/mysql
+    command: --default_authentication_plugin=mysql_native_password
+  adminer:
+    image: dehy/adminer
+    networks:
+      - database_net
+    ports:
+      - 8080:80
+
+networks:
+  database_net:
+    driver: bridge
+
+volumes:
+  database_data:
