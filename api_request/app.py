@@ -6,6 +6,9 @@ TheMoviePredictor script
 Author: Arnaud de Mouhy <arnaud@admds.net>
 """
 
+import os
+from dotenv import load_dotenv
+
 import mysql.connector
 import sys
 import argparse
@@ -16,9 +19,15 @@ from person import Person
 from omdb import OMDB
 
 def connectToDatabase():
-    return mysql.connector.connect(user='predictor', password='predictor',
-                              host='database',
-                              database='predictor')
+    load_dotenv()
+    mysql_user = os.getenv('mysql_user')
+    mysql_password = os.getenv('mysql_password')
+    mysql_host = os.getenv('mysql_host')
+    mysql_database = os.getenv('mysql_database')
+    return mysql.connector.connect(user=mysql_user, password=mysql_password,
+                              host=mysql_host,
+                              database=mysql_database)
+    # return mysql.connector.connect(user='predictor', password='predictor', host='database', database='predictor')
 
 def disconnectDatabase(cnx):
     cnx.close()

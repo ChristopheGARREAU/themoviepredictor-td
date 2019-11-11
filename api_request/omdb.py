@@ -13,7 +13,7 @@ class OMDB:
         
            
         load_dotenv()
-        API_KEY = os.getenv('api_key')
+        API_KEY = os.getenv('OMDB_api_key')
 
         data = requests.get(f"http://www.omdbapi.com/?apikey={API_KEY}&i={id}").json()
 
