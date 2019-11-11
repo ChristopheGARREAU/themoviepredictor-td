@@ -12,4 +12,4 @@ COPY . /usr/src/themoviepredictor
 
 WORKDIR /usr/src/themoviepredictor
 
-CMD python /usr/src/themoviepredictor/app.py import --api omdb --imdbId tt7286456
+CMD python /usr/src/themoviepredictor/app.py import --api omdb --imdbId tt0499549

@@ -8,7 +8,7 @@ services:
       - .:/usr/src/themoviepredictor  # répertoire courant : chemin dans le container
     networks:
       - database_net
-    command: tail -f /dev/null # exécute une requête qui ne revoie rien -> met le script en attente de commande
+    # command: tail -f /dev/null # exécute une requête qui ne revoie rien -> met le script en attente de commande
     depends_on: 
       - database      #attend que la bdd sql démarre avant de se lancer
   database:
