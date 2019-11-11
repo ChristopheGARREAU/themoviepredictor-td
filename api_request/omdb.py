@@ -31,6 +31,12 @@ class OMDB:
         self.rating = data['Rated']
         if self.rating == "PG":
             self.rating = "TP"
+        if self.rating == "PG-13":
+            self.rating = "-12"
+        if self.rating == "R":
+            self.rating = "-16"
+        if self.rating == "NC-17":
+            self.rating = "-18"
         
 
      
