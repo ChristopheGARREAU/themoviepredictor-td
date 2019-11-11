@@ -38,7 +38,7 @@ class OMDB:
         if self.rating == "NC-17":
             self.rating = "-18"
         
-
+        self.imdbId = data['imdbID']
      
         locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
         if data['BoxOffice'] != "N/A":
@@ -52,3 +52,9 @@ class OMDB:
         for person in range(len(actor)):
             name_separated = actor[person].strip().split(' ')
             self.actors.append(name_separated)
+
+        self.directors = []
+        director = data['Director'].split(',')
+        for person in range(len(director)):
+            name_separated = director[person].strip().split(' ')
+            self.directors.append(name_separated)

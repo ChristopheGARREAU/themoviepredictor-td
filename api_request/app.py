@@ -49,8 +49,8 @@ def insert_people_query(person):
 
 def insert_movie_query(movie):  # méthode cursor connector statement pour gérer quand donnée manque
     add_movie = (
-        "INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`)"
-        "VALUES (%(title)s, %(original_title)s, %(duration)s, %(rating)s, %(release_date)s, %(revenu)s)"
+        "INSERT INTO `movies` (`title`, `original_title`, `duration`, `rating`, `release_date`, `revenu`, `imdbId`)"
+        "VALUES (%(title)s, %(original_title)s, %(duration)s, %(rating)s, %(release_date)s, %(revenu)s, %(imdbId)s)"
     )    
     data_movie = {
         'title' : movie.title,
@@ -58,8 +58,12 @@ def insert_movie_query(movie):  # méthode cursor connector statement pour gére
         'duration' : movie.duration,
         'rating' : movie.rating,
         'release_date' : movie.release_date,
-        'revenu' : movie.revenu}
+        'revenu' : movie.revenu,
+        'imdbId' : movie.imdbId}
     return (add_movie, data_movie)
+
+def insert_movie_people_rule_query(movie_id, person_id, rule_id):
+    return(f"INSERT INTO `movies_people_rules` (`movie_id`, `people_id`, `rule_id`) VALUES ('{movie_id}', '{person_id}', '{rule_id}');")
 
 def find(table, id):
     cnx = connectToDatabase()
@@ -134,6 +138,16 @@ def insert_movie(movie):
     cursor = createCursor(cnx)
     (add_movie, data_movie) = insert_movie_query(movie) # méthode cursor connector statement suite
     cursor.execute(add_movie, data_movie)
+    cnx.commit()
+    last_id = cursor.lastrowid
+    closeCursor(cursor)
+    disconnectDatabase(cnx)
+    return last_id
+
+def insert_movie_people_rule(movie_id, person_id, rule_id):
+    cnx = connectToDatabase()
+    cursor = createCursor(cnx)
+    cursor.execute(insert_movie_people_rule_query(movie_id, person_id, rule_id))
     cnx.commit()
     last_id = cursor.lastrowid
     closeCursor(cursor)
@@ -245,6 +259,7 @@ if args.context == "import":
     nouveau_film = OMDB(args.imdbId)
     movie= Movie(nouveau_film.title, nouveau_film.original_title, nouveau_film.duration, nouveau_film.release_date, nouveau_film.rating)
     movie.revenu = nouveau_film.revenu
+    movie.imdbId = nouveau_film.imdbId
     movie_id = insert_movie(movie)
     print(f"Nouveau film inséré avec l'id '{movie_id}'")
     for person in range(len(nouveau_film.actors)):
@@ -252,10 +267,13 @@ if args.context == "import":
             firstname = nouveau_film.actors[person][0],
             lastname = nouveau_film.actors[person][1])
         actor_id = insert_people(actor)
-        print(f"Nouvelle personne insérée avec l'id '{actor_id}'")
-
-    #print(nouveau_film.title)
-    #print(nouveau_film.duration)
-    #print(nouveau_film.release_date)
-    #print(nouveau_film.revenu)
+        insert_movie_people_rule(movie_id, actor_id, 1)
+        print(f"Nouvelle personne insérée avec l'id '{actor_id}' avec le rule '{1}")
+    for person in range(len(nouveau_film.directors)):
+        director = Person(
+            firstname = nouveau_film.directors[person][0],
+            lastname = nouveau_film.directors[person][1])
+        director_id = insert_people(director)
+        insert_movie_people_rule(movie_id, director_id, 2)
+        print(f"Nouvelle personne insérée avec l'id '{director_id}' avec le rule '{2}")
     
